@@ -1,6 +1,7 @@
 package com.phanaticmc.chunkspawnerlimit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.phanaticmc.chunkspawnerlimit.listeners.*;
@@ -9,10 +10,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class ChunkSpawnerLimit extends JavaPlugin {
 	public static ChunkSpawnerLimit instance;
-	public static int limit;
-	public static boolean cleanOnChunkLoad;
-	public static boolean notifyOnChunkLoad;
+	public static int limit, groupChunksRadius;
+	public static boolean cleanOnChunkLoad, notifyOnChunkLoad, groupChunks;
 	public static Material spawnermat;
+	public static String denyMessage;
 
 	@Override
 	public void onEnable() {
@@ -28,12 +29,25 @@ public class ChunkSpawnerLimit extends JavaPlugin {
 		if (!config.contains("notifyOnChunkLoad")) {
 			config.addDefault("notifyOnChunkLoad", false);
 		}
+		if (!config.contains("groupChunks")) {
+			config.addDefault("groupChunks", false);
+		}
+		if (!config.contains("groupChunksRadius")) {
+			config.addDefault("groupChunksRadius", 1);
+		}
+		if (!config.contains("denyMessage")) {
+			config.addDefault("denyMessage", "Too many Spawners in this chunk, 4 is the max!");
+		}
+
 		config.options().copyDefaults(true);
 		saveConfig();
 
 		limit = config.getInt("limit");
+		groupChunksRadius = config.getInt("groupChunksRadius");
+		groupChunks = config.getBoolean("groupChunks");
 		cleanOnChunkLoad = config.getBoolean("cleanOnChunkLoad");
 		notifyOnChunkLoad = config.getBoolean("notifyOnChunkLoad");
+		denyMessage = ChatColor.translateAlternateColorCodes('&', config.getString("denyMessage"));
 
 		if (cleanOnChunkLoad || notifyOnChunkLoad) {
 			Bukkit.getPluginManager().registerEvents(new ChunkLoad(), this);
