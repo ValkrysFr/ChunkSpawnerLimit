@@ -17,9 +17,10 @@ import java.util.Set;
 public class BlockPlace implements Listener {
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (event.getBlockPlaced().getType() != spawnermat) {
+		if (event.getBlockPlaced().getType() != spawnermat || event.getPlayer().hasPermission("chunksawnerlimit.bypass")) {
 			return;
 		}
+
 		Collection<Chunk> chunks = around(event.getBlock().getLocation().getChunk(), groupChunks ? groupChunksRadius : 0);
 		int spawnercount = 1;
 		for (Chunk chunk : chunks)
